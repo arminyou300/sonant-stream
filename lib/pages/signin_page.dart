@@ -8,7 +8,7 @@ class SigninPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kDarkBackgroundColor,
-      body: Column(),
+      body: const Column(),
     );
   }
 }
