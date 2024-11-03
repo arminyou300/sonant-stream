@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sonant_stream/constants.dart';
 import 'package:sonant_stream/pages/next_signup_page.dart';
+import 'package:sonant_stream/pages/signin_page.dart';
 import 'package:sonant_stream/widgets/pretty_textfield.dart';
 import 'package:toastification/toastification.dart';
 
@@ -17,7 +19,8 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
-  // var firebaseFirestore = FirebaseFirestore.instance.collection('user');
+
+  var firebaseFirestore = FirebaseFirestore.instance.collection('users');
 
   bool validate1 = false;
   bool validate2 = false;
@@ -27,6 +30,7 @@ class _SignupPageState extends State<SignupPage> {
   bool emailValidate = false;
   String emailError = '';
   String passError = '';
+  bool isPressed = false;
 
   @override
   void dispose() {
@@ -35,18 +39,25 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
-  // Future<void> createUserDoc() async {
-  //   if (auth.currentUser != null) {
-  //     Map<String, dynamic> data = {
-  //
-  //     };
-  //     firebaseFirestore.add(data);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+        ),
+      ),
       backgroundColor: kDarkBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
@@ -258,11 +269,15 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 onPressed: () async {
+
                   if (validate1 &&
                       validate2 &&
                       validate3 &&
                       validate4 &&
                       emailController.text.isNotEmpty) {
+                    setState(() {
+                      isPressed = true;
+                    });
                     if (RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                         .hasMatch(emailController.text)) {
@@ -283,7 +298,10 @@ class _SignupPageState extends State<SignupPage> {
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation,
                                           secondaryAnimation) =>
-                                      const NextSignupPage(),
+                                      NextSignupPage(
+                                    email: emailController.text,
+                                    pass: passwordController.text,
+                                  ),
                                   transitionsBuilder: (context, animation,
                                       secondaryAnimation, child) {
                                     return SlideTransition(
@@ -301,17 +319,48 @@ class _SignupPageState extends State<SignupPage> {
                             }
                           });
                         } on FirebaseAuthException catch (e) {
+                          setState(() {
+                            isPressed = false;
+                          });
                           if (e.code == 'email-already-in-use') {
                             if (context.mounted) {
                               toastification.show(
-                                title: const Text(
-                                  "The email you've entered is already in use",
-                                ),
                                 alignment: Alignment.bottomCenter,
                                 foregroundColor: Colors.white,
                                 closeOnClick: true,
-                                closeButtonShowType: CloseButtonShowType.always,
-                                type: ToastificationType.warning,
+                                description: const Text(
+                                  "The email you've entered already exists",
+                                ),
+                                icon: TextButton(
+                                  onPressed: () {
+                                    toastification.dismissAll();
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            const SignInPage(),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          return SlideTransition(
+                                            position: animation.drive(
+                                              Tween(
+                                                begin: const Offset(0, 1),
+                                                end: Offset.zero,
+                                              ),
+                                            ),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Login',
+                                  ),
+                                ),
+                                closeButtonShowType: CloseButtonShowType.none,
+                                type: ToastificationType.error,
                                 showProgressBar: false,
                                 autoCloseDuration: const Duration(seconds: 5),
                                 applyBlurEffect: true,
@@ -355,11 +404,20 @@ class _SignupPageState extends State<SignupPage> {
                     });
                   }
                 },
-                child: const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white,
-                  size: 17,
-                ),
+                child: isPressed == false
+                    ? const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white,
+                        size: 17,
+                      )
+                    : const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ),
               ),
             ],
           ),

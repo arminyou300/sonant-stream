@@ -105,7 +105,7 @@ class IntroPage extends StatelessWidget {
                     context,
                     DialogRoute(
                       context: context,
-                      builder: (context) => const SigninPage(),
+                      builder: (context) => const SignInPage(),
                     ),
                   );
                 },
