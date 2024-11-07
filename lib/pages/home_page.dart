@@ -1,3 +1,4 @@
+import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sonant_stream/constants.dart';
@@ -17,6 +18,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kDarkBackgroundColor,
+      bottomNavigationBar: CrystalNavigationBar(
+        currentIndex: 0,
+        indicatorColor: Colors.white,
+        items: [
+          CrystalNavigationBarItem(
+            icon: Icons.ice_skating_outlined,
+            unselectedIcon: Icons.ice_skating_outlined,
+            selectedColor: Colors.white,
+          ),
+
+          /// Favourite
+          CrystalNavigationBarItem(
+            icon: Icons.ice_skating_outlined,
+            unselectedIcon: Icons.ice_skating_outlined,
+            selectedColor: Colors.red,
+          ),
+        ],
+      ),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -28,29 +47,13 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 'Welcome ${auth.currentUser?.displayName}!',
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Lato',
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontFamily: 'Lato',
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              actions: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey,
-                  child: auth.currentUser?.photoURL != null
-                      ? Image.network(
-                          '${auth.currentUser?.photoURL}',
-                          fit: BoxFit.fill,
-                        )
-                      : const Icon(
-                          Icons.person_2,
-                          color: Colors.white,
-                        ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-              ],
+              automaticallyImplyLeading: false,
             )
           ];
         },
