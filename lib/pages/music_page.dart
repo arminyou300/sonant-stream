@@ -70,7 +70,8 @@ class _LyricPageState extends State<LyricPage> {
         final milliseconds = int.parse(match.group(3)!);
         final text = match.group(4)?.trim() ?? "";
 
-        final time = Duration(minutes: minutes, seconds: seconds, milliseconds: milliseconds);
+        final time = Duration(
+            minutes: minutes, seconds: seconds, milliseconds: milliseconds);
         parsedLyrics.add(LyricLine(time, text));
       }
     }
@@ -84,14 +85,14 @@ class _LyricPageState extends State<LyricPage> {
       setState(() => currentIndex = i);
     }
 
-    final offset = (currentIndex * 30.0) - (scrollController.position.viewportDimension / 4);
+    final offset = (currentIndex * 30.0) -
+        (scrollController.position.viewportDimension / 4);
     scrollController.animateTo(
       offset.clamp(0.0, scrollController.position.maxScrollExtent),
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
   }
-
 
   @override
   void dispose() {
@@ -105,21 +106,29 @@ class _LyricPageState extends State<LyricPage> {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: lyrics.length,
-              itemBuilder: (context, index) {
-                return Text(
-                  lyrics[index].line,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: index == currentIndex ? Colors.blue : Colors.black,
+          widget.lrcUrl != ''
+              ? Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    itemCount: lyrics.length,
+                    itemBuilder: (context, index) {
+                      return Text(
+                        lyrics[index].line,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: index == currentIndex
+                              ? Colors.blue
+                              : Colors.black,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                )
+              : const Center(
+                  child: Text(
+                    'We still don\'t know the lyrics',
+                  ),
+                ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

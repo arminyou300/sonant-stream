@@ -1,4 +1,4 @@
-name: Sonant
+name: sonant_stream
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -44,10 +44,13 @@ dependencies:
   just_audio: ^0.9.42
   crystal_navigation_bar: ^1.0.1
   flutter_launcher_icons: ^0.14.1
+  fluentui_system_icons: ^1.1.263
+  hugeicons: ^0.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -66,11 +69,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
     - assets/
+    - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
